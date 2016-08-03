@@ -1,0 +1,4 @@
+---
+# handlers file for jenkins
+- name: nginx restart
+  service: name=nginx state=restarted
