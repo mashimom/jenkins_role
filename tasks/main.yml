@@ -7,8 +7,16 @@
 
 - apt: name=jenkins update_cache=yes cache_valid_time=300 state=latest
   become: yes
+  notify: jenkins restart
+
+- service: name=jenkins enabled=yes
+  become: yes
 
 - apt: name=nginx update_cache=yes cache_valid_time=300 state=latest
+  become: yes
+  notify: nginx restart
+
+- service: name=nginx enabled=yes
   become: yes
 
 - file: path=/etc/nginx/sites-enabled/default state=absent
@@ -23,4 +31,9 @@
   become: yes
   notify: nginx restart
 
-- user: name=jenkins generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+- user: name=jenkins generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa ssh_key_passphrase={{ JENKINS_SSH_PASS }}
+  become: yes
+
+- lineinfile: path=/etc/default/jenkins line='JENKINS_JAVA_OPTIONS="-Dhudson.model.ParametersAction.safeParameters=RELEASE_VERSION,DEVELOPMENT_VERSION"'
+  become: yes
+  notify: jenkins restart
