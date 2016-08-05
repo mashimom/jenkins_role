@@ -34,6 +34,10 @@
 - user: name=jenkins generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa ssh_key_passphrase={{ JENKINS_SSH_PASS }}
   become: yes
 
-- lineinfile: path=/etc/default/jenkins line='JENKINS_JAVA_OPTIONS="-Dhudson.model.ParametersAction.safeParameters=RELEASE_VERSION,DEVELOPMENT_VERSION"'
+- lineinfile: dest=/etc/default/jenkins line='JAVA_ARGS="$JAVA_ARGS -Dhudson.model.ParametersAction.safeParameters=RELEASE_VERSION,DEVELOPMENT_VERSION"'
+  become: yes
+  notify: jenkins restart
+
+- lineinfile: dest=/etc/default/jenkins line='JENKINS_ARGS="${JENKINS_ARGS} --prefix=$PREFIX"'
   become: yes
   notify: jenkins restart
